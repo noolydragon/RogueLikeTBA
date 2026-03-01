@@ -54,4 +54,10 @@ void Player::Update() {
     if (room->GetLocation(tryPos) == 'D') {
         room->OpenDoor(tryPos);
     }
+
+    if (room->GetLocation(tryPos) == 'L'){
+        if (m_keyCount >= 1){
+            room->OpenDoor(tryPos);
+        }
+    }
 }

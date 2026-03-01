@@ -1,0 +1,11 @@
+level 5
+next_level assets/level_4.map
+next_level assets/level_1.map
+map
+# # # # # # # # -1
+# 0 K 0 0 # 0 # -1
+# 0 0 0 0 # 0 # -1
+# 0 S 0 0 # 0 # -1
+# 0 # # # # 0 # -1
+# 0 0 0 0 0 0 # -1
+# # # # # # # # -2

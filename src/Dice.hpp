@@ -5,7 +5,7 @@
 
 struct Die
 {
-    int sides = 20;
+    int sides = 100;
 };
 
 struct RollStats
@@ -17,7 +17,7 @@ struct RollStats
     int total = 0;
 };
 
-RollStats RollDice(std::vector<Die> _dice)
+static RollStats RollDice(std::vector<Die> _dice) 
 {
     RollStats stats = {};
 

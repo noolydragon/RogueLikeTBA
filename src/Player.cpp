@@ -1,10 +1,12 @@
 #include "Player.hpp"
 #include "Room.hpp"
 #include "fogpi/io.hpp"
+#include "Dice.hpp"
 
 void Player::Start(Vec2 _pos) {
     m_character = 'P';
     m_position = _pos;
+    
 }
 
 void Player::Update() {

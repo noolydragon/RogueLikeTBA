@@ -110,6 +110,6 @@ void Player::Update() {
     }
 
     // if (room->GetLocation(tryPos) == 'E'){
-    //     room->TakeDamage(tryPos);
-    //}
+    //      room->BeginCombat(tryPos);
+    // }
 }

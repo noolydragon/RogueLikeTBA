@@ -1,5 +1,5 @@
 #include "Room.hpp"
-
+#include "Dice.hpp"
 #include "Player.hpp"
 
 #include <fstream>
@@ -152,7 +152,14 @@ void Room::OpenDoor(Vec2 _pos)
     }
 }
 
-// void Room::TakeDamage(Vec2 _pos)
-// {
-    
+// void Room::BeginCombat(Vec2 _pos){
+//     if (m_player == nullptr) return;
+
+//     bool combatActive = true;
+//     int enemyHP = 10;
+//     while (enemyHP > 0 && m_player->GetHP() > 0) {
+//         printf("\nPlayer HP: %d | Enemy HP: 5d" , m_player->GetHP(), enemyHP);
+        
+
+//     }
 // }

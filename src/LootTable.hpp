@@ -9,6 +9,7 @@
 struct Item {
     std::string name;
     int itemId;
+    char itemChar;
     // Add other properties like rarity, value, etc.
 };
 
@@ -16,15 +17,14 @@ struct Item {
 struct LootEntry {
     Item item;
     unsigned int weight;
-    int minQuantity;
-    int maxQuantity;
+    
 };
 
 // 3. Define the Loot Table class
 class LootTable {
 public:
-    void addEntry(const Item& item, unsigned int weight, int minQty = 1, int maxQty = 1) {
-        entries.push_back({item, weight, minQty, maxQty});
+    void addEntry(const Item& item, unsigned int weight) {
+        entries.push_back({item, weight});
         totalWeight = std::accumulate(entries.begin(), entries.end(), 0, [](int sum, const LootEntry& entry){
             return sum + entry.weight;
         });

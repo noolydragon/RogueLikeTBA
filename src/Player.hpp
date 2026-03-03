@@ -10,4 +10,6 @@ public:
 private:
     int m_keyCount = 0;
     int m_health = 20;
+    int m_goldAmount = 0;
+    char m_weapon;
 };

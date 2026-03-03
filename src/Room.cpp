@@ -151,3 +151,8 @@ void Room::OpenDoor(Vec2 _pos)
         }
     }
 }
+
+// void Room::TakeDamage(Vec2 _pos)
+// {
+    
+// }

@@ -55,9 +55,11 @@ void Player::Update() {
         room->OpenDoor(tryPos);
     }
 
-    if (room->GetLocation(tryPos) == 'L'){
-        if (m_keyCount >= 1){
-            room->OpenDoor(tryPos);
-        }
+    if (room->GetLocation(tryPos) == 'L' && (m_keyCount >= 1)){
+        room->OpenDoor(tryPos);
     }
+
+    // if (room->GetLocation(tryPos) == 'E'){
+    //     room->TakeDamage(tryPos);
+    //}
 }

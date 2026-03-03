@@ -2,12 +2,11 @@
 
 #include "Entity.hpp"
 
-class Player : public Entity
+class Enemies : public Entity
 {
 public:
     void Start(Vec2 _pos);
     void Update();
 private:
-    int m_keyCount = 0;
-    int m_health = 20;
+    int m_health = 10;
 };

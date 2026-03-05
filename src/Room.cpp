@@ -1,6 +1,7 @@
 #include "Room.hpp"
 #include "Dice.hpp"
 #include "Player.hpp"
+#include "Enemy.hpp"
 
 #include <fstream>
 #include <string>
@@ -89,6 +90,15 @@ void Room::Load(std::string _path)
                     doorCount++;
                 }
             }
+            //instantiate an enemy where E appears on the map
+            if (m_map[y][x] == 'E')
+            {
+                if (m_enemy == nullptr)
+                    m_enemy = new Enemy();
+
+                m_enemy->Start(Vec2(x,y));
+                m_map[y][x] = ' ';
+            }
         }
     }
 }
@@ -152,14 +162,42 @@ void Room::OpenDoor(Vec2 _pos)
     }
 }
 
-// void Room::BeginCombat(Vec2 _pos){
-//     if (m_player == nullptr) return;
+void Room::BeginCombat(Vec2 _pos){
+    if (m_player == nullptr || m_enemy == nullptr) return;
 
-//     bool combatActive = true;
-//     int enemyHP = 10;
-//     while (enemyHP > 0 && m_player->GetHP() > 0) {
-//         printf("\nPlayer HP: %d | Enemy HP: 5d" , m_player->GetHP(), enemyHP);
-        
+    printf("Combat Started");
 
-//     }
-// }
+    while (m_enemy->GetHP() > 0 && m_player->GetHP() > 0) {
+        printf("\nPlayer HP: %d | Enemy HP: %d", m_player->GetHP(), m_enemy->GetHP());
+        printf("\nPress enter to roll for an attack! ");
+        getchar();
+
+        std::vector<Die> playerDice = {{20}};
+
+        RollStats playerRoll = RollDice(playerDice);
+
+        printf("You rolled a %d!\n", playerRoll.total);
+
+        if (m_enemy->GetHP() <= 0) {
+            printf("\nVictory! The enemy has been defeated.\n");
+            ClearLocation(_pos);
+            break;
+        }
+
+        printf("Enemy turn\n");
+        int enemyRoll = Dice::RollDice(1, 20);
+        if (enemyRoll > 12) {
+            int eDamage = Dice::RollDice(1, 4);
+            m_player->TakeDamage(eDamage);
+            printf("You took %d damage!\n", eDamage);
+        }else {
+            printf("The enemy missed!\n");
+        }
+
+        if (m_player->GetHP() <= 0) {
+            printf("\nYOU DIED");
+            exit(0);
+        }
+    }
+    printf("COMBAT ENDED");
+}

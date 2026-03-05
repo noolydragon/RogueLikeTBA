@@ -3,6 +3,7 @@
 #include "fogpi/io.hpp"
 #include "Dice.hpp"
 #include "LootTable.hpp"
+#include "Enemy.hpp"
 
 void Player::Start(Vec2 _pos) {
     m_character = 'P';
@@ -112,4 +113,7 @@ void Player::Update() {
     // if (room->GetLocation(tryPos) == 'E'){
     //      room->BeginCombat(tryPos);
     // }
+    if (room->GetLocation(tryPos) == 'E'){
+        room->BeginCombat(tryPos);
+    }
 }

@@ -137,6 +137,10 @@ char Room::GetLocation(Vec2 _pos)
         if (m_player->GetPosition() == _pos)
             return m_player->Draw();
     
+    if (m_enemy != nullptr)
+        if (m_enemy->GetPosition() == _pos)
+            return m_enemy->Draw();
+    
     return m_map[_pos.y][_pos.x];
 }
 
@@ -162,42 +166,54 @@ void Room::OpenDoor(Vec2 _pos)
     }
 }
 
-void Room::BeginCombat(Vec2 _pos){
+void Room::BeginCombat(Vec2 _pos)
+{
+    char promptAnswer;
+    int gainedGold = m_enemy->GetGold();
+    printf("BeginCombat\n");
     if (m_player == nullptr || m_enemy == nullptr) return;
 
-    printf("Combat Started");
+    printf("\nCOMBAT STARTED\n");
 
-    while (m_enemy->GetHP() > 0 && m_player->GetHP() > 0) {
+    while (m_enemy->GetHP() > 0 && m_player->GetHP() > 0)
+        {
         printf("\nPlayer HP: %d | Enemy HP: %d", m_player->GetHP(), m_enemy->GetHP());
-        printf("\nPress enter to roll for an attack! ");
-        getchar();
+        request_char("\nEnter roll to roll for attack");
 
-        std::vector<Die> playerDice = {{20}};
-
+        
+        std::vector<Die> playerDice = { {20} }; // Change based on weapon
+        
         RollStats playerRoll = RollDice(playerDice);
-
-        printf("You rolled a %d!\n", playerRoll.total);
+        
+        printf("You rolled a total of %d\n", playerRoll.total);
+        m_enemy->TakeDamage(playerRoll.total);
+        
+        if (playerRoll.critCount > 0) {
+            printf("CRITICAL HIT! %d\n", playerRoll.critCount);
+        }
 
         if (m_enemy->GetHP() <= 0) {
-            printf("\nVictory! The enemy has been defeated.\n");
             ClearLocation(_pos);
+            printf("The enemy has been slain!\n");
+            m_player->SetXP(5);
+            printf("Would you like to loot?\n");
+            do{
+            promptAnswer = request_char("\nY or N");
+            } while (promptAnswer != 'y' &&
+                     promptAnswer != 'n');
+            if (promptAnswer == 'y'){
+                m_player->AddGold(gainedGold);
+            }else break;
+            delete m_enemy;
+            m_enemy = nullptr;
             break;
         }
 
-        printf("Enemy turn\n");
-        int enemyRoll = Dice::RollDice(1, 20);
-        if (enemyRoll > 12) {
-            int eDamage = Dice::RollDice(1, 4);
-            m_player->TakeDamage(eDamage);
-            printf("You took %d damage!\n", eDamage);
-        }else {
-            printf("The enemy missed!\n");
-        }
-
-        if (m_player->GetHP() <= 0) {
-            printf("\nYOU DIED");
-            exit(0);
-        }
+        std::vector<Die> enemyDice = { {10} };
+        RollStats enemyRoll = RollDice(enemyDice);
+        
+        printf("Enemy attacks for %d damage!\n", enemyRoll.total);
+        m_player->TakeDamage(enemyRoll.total);
     }
-    printf("COMBAT ENDED");
+    printf("You gained %d gold and now have %d total gold, %d health %d XP\n", gainedGold, m_player->GetGold(), m_player->GetHP(), m_player->GetXP());
 }

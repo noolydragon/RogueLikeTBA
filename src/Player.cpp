@@ -83,6 +83,8 @@ void Player::Update() {
 
     if (room->GetLocation(tryPos) == 'L' && (m_keyCount >= 1)){
         room->OpenDoor(tryPos);
+        m_keyCount -= 1;
+        printf("You used a key!, You have %d keys left\n", m_keyCount);
     }
 
     if (room->GetLocation(tryPos) == 'C'){
@@ -109,10 +111,6 @@ void Player::Update() {
             m_goldAmount;
         }
     }
-
-    // if (room->GetLocation(tryPos) == 'E'){
-    //      room->BeginCombat(tryPos);
-    // }
     if (room->GetLocation(tryPos) == 'E'){
         room->BeginCombat(tryPos);
     }

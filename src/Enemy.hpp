@@ -8,9 +8,11 @@ public:
     void Start(Vec2 _pos);
     void Update();
     int GetHP() { return m_EHealth; }
+    int GetGold() { return m_EGold; }
     void TakeDamage(int _amount) { m_EHealth -= _amount; }
 private:
     int m_EHealth = 10;
     int m_EStrength = 5;
     int m_ESpeed = 1;
+    int m_EGold = 20;
 };

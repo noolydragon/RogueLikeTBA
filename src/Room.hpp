@@ -6,8 +6,6 @@
 class Entity;
 class Player;
 class Enemy;
-class Monster;
-
 class Room {
 public:
     void Load(std::string _path);
@@ -21,7 +19,6 @@ private:
     std::vector<Entity*> m_entities;
     Player* m_player = nullptr;
     Enemy* m_enemy = nullptr;
-    std::vector<Monster*> m_monsters;
     std::vector<std::vector<char>> m_map;
     std::vector<Door> m_doors;
 };

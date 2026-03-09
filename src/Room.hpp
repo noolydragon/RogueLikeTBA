@@ -16,9 +16,11 @@ public:
     void ClearLocation(Vec2 _pos);
     void OpenDoor(Vec2 _pos);
     void BeginCombat(Vec2 _pos);
+    void Trap(Vec2 _pos);
 private:
     std::vector<Entity*> m_entities;
     Player* m_player = nullptr;
     std::vector<std::vector<char>> m_map;
     std::vector<Door> m_doors;
+    int m_roomcount = 0;
 };

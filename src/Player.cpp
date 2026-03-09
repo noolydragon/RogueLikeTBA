@@ -4,6 +4,7 @@
 #include "Dice.hpp"
 #include "LootTable.hpp"
 #include "Enemy.hpp"
+#include "Room.hpp"
 
 void Player::Start(Vec2 _pos) {
     m_character = 'P';
@@ -85,10 +86,11 @@ void Player::Update() {
         room->OpenDoor(tryPos);
         m_keyCount -= 1;
         printf("You used a key!, You have %d keys left\n", m_keyCount);
+
     }
 
-    if (room->GetLocation(tryPos) == 'C'){
-         std::srand(static_cast<unsigned int>(std::time(0))); 
+    if (room->GetLocation(tryPos) == 'C' && (m_keyCount >= 1)){
+        std::srand(static_cast<unsigned int>(std::time(0))); 
 
         LootTable chestLoot;
         chestLoot.addEntry({"Short Sword", 101, 's'}, 4);
@@ -98,9 +100,9 @@ void Player::Update() {
         chestLoot.addEntry({"Rapier", 105, 'r'}, 4);
         chestLoot.addEntry({"Long Sword", 106, 'l'}, 3);
         chestLoot.addEntry({"Great Sword", 102, 'G'}, 2);
-        chestLoot.addEntry({"5 Gold", 108, '5'}, 2);
-        chestLoot.addEntry({"10 Gold", 109, '1'}, 2);
-        chestLoot.addEntry({"15 Gold", 110, '0'}, 2);
+        chestLoot.addEntry({"5 Gold", 108, '5'}, 8);
+        chestLoot.addEntry({"10 Gold", 109, '1'}, 7);
+        chestLoot.addEntry({"15 Gold", 110, '0'}, 6);
 
         Item droppedItem = chestLoot.chooseRandomItem();
         std::cout << "You found: " << droppedItem.name << std::endl;
@@ -108,10 +110,27 @@ void Player::Update() {
             m_weapon = droppedItem.itemChar;
         }
         if(droppedItem.itemId > 107){
-            m_goldAmount;
+            if(droppedItem.itemChar == '5'){
+                m_goldAmount += 5;
+            }
+            else if(droppedItem.itemChar == '1'){
+                m_goldAmount += 10;
+            }
+            else if(droppedItem.itemChar == '0'){
+                m_goldAmount += 15;
+            }
+
         }
+        m_keyCount--;
+        room->ClearLocation(tryPos);
     }
     if (room->GetLocation(tryPos) == 'G'|| room->GetLocation(tryPos) == 'M'){
+
+    if (room->GetLocation(tryPos) == 'E'){
         room->BeginCombat(tryPos);
+    }
+
+    if (room->GetLocation(tryPos) == 'T'){
+        room->Trap(tryPos);
     }
 }

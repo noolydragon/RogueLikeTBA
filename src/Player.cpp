@@ -4,6 +4,7 @@
 #include "Dice.hpp"
 #include "LootTable.hpp"
 #include "Enemy.hpp"
+#include "Room.hpp"
 
 void Player::Start(Vec2 _pos) {
     m_character = 'P';
@@ -121,9 +122,14 @@ void Player::Update() {
 
         }
         m_keyCount--;
+        room->ClearLocation(tryPos);
     }
 
     if (room->GetLocation(tryPos) == 'E'){
-        //room->BeginCombat(tryPos);
+        room->BeginCombat(tryPos);
+    }
+
+    if (room->GetLocation(tryPos) == 'T'){
+        room->Trap(tryPos);
     }
 }

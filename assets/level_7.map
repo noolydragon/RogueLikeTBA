@@ -1,0 +1,11 @@
+level 7
+next_level assets/level_1.map
+next_level assets/level_4.map
+map
+# # # D # # # # -1
+# K 0 0 0 0 0 # -1
+# 0 0 # # 0 E # -1
+# E 0 # # 0 0 # -1
+# 0 0 # # 0 0 # -1
+# 0 0 0 0 0 S # -1
+# # # # # # # # -2

@@ -162,8 +162,12 @@ void Room::ClearLocation(Vec2 _pos)
 
 void Room::OpenDoor(Vec2 _pos)
 {
-    std::string sti = std::to_string(1 + (rand() % (5-1 +1)));
-    Load("level_4.map");
+    std::string sti = std::to_string(1 + (rand() % (9-1 +1)));
+    Load("assets/level_" + sti + ".map" );
+    m_roomcount ++;
+    if(m_roomcount == 10){
+        Load("assets/level_10.map");
+    }
     
 }
 
@@ -218,3 +222,9 @@ void Room::BeginCombat(Vec2 _pos)
     }
     printf("You gained %d gold and now have %d total gold, %d health %d XP\n", gainedGold, m_player->GetGold(), m_player->GetHP(), m_player->GetXP());
 }
+
+void Room::Trap(Vec2 _pos){
+    m_player->TakeDamage(5);
+    printf("you have taken %d health becuse of a trap\n", m_player->GetHP());
+}
+

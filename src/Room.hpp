@@ -8,6 +8,7 @@ class Player;
 class Enemy;
 class Room {
 public:
+    Player* GetPlayer();
     void Load(std::string _path);
     void Draw();
     void Update();
@@ -18,7 +19,6 @@ public:
 private:
     std::vector<Entity*> m_entities;
     Player* m_player = nullptr;
-    Enemy* m_enemy = nullptr;
     std::vector<std::vector<char>> m_map;
     std::vector<Door> m_doors;
 };

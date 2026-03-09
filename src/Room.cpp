@@ -6,8 +6,18 @@
 #include <fstream>
 #include <string>
 
+Player* Room::GetPlayer()
+{
+    return m_player;
+}
+
 void Room::Load(std::string _path)
 {
+    for (Entity* e : m_entities) {
+        delete e;
+    }
+    m_entities.clear();
+
     m_map.clear();
     m_doors.clear();
 
@@ -90,13 +100,19 @@ void Room::Load(std::string _path)
                     doorCount++;
                 }
             }
-            //instantiate an enemy where E appears on the map
-            if (m_map[y][x] == 'E')
+            //instantiate a Goblin where G appears on the map
+            if (m_map[y][x] == 'G')
             {
-                if (m_enemy == nullptr)
-                    m_enemy = new Enemy();
-
-                m_enemy->Start(Vec2(x,y));
+                Goblin* g = new Goblin();
+                g->Start(Vec2(x,y));
+                m_entities.push_back(g);
+                m_map[y][x] = ' ';
+            }
+            else if (m_map[y][x] == 'M')
+            {
+                Sloblin* s = new Sloblin();
+                s->Start(Vec2(x,y));
+                m_entities.push_back(s);
                 m_map[y][x] = ' ';
             }
         }
@@ -105,6 +121,9 @@ void Room::Load(std::string _path)
 
 void Room::Update()
 {
+    for (Entity* e : m_entities) {
+        e->Update();
+    }
     Draw();
     if (m_player != nullptr)
     {
@@ -127,20 +146,24 @@ void Room::Draw()
 
 char Room::GetLocation(Vec2 _pos)
 {
-    if (_pos.y >= m_map.size())
+    if (_pos.y >= m_map.size()|| _pos.y < 0)
         return ' ';
     
-    if (_pos.x >= m_map[_pos.y].size())
+    if (_pos.x >= m_map[_pos.y].size()|| _pos.x < 0)
         return ' ';
 
-    if (m_player != nullptr)
-        if (m_player->GetPosition() == _pos)
-            return m_player->Draw();
-    
-    if (m_enemy != nullptr)
-        if (m_enemy->GetPosition() == _pos)
-            return m_enemy->Draw();
-    
+    if (m_player != nullptr && m_player->GetPosition() == _pos)
+    {
+        return m_player->Draw();
+    }
+
+    for (Entity* e : m_entities)
+    {
+        if (e != nullptr && e->GetPosition() == _pos)
+        {
+            return e->Draw();
+        }
+    }
     return m_map[_pos.y][_pos.x];
 }
 
@@ -169,15 +192,22 @@ void Room::OpenDoor(Vec2 _pos)
 void Room::BeginCombat(Vec2 _pos)
 {
     char promptAnswer;
-    int gainedGold = m_enemy->GetGold();
-    printf("BeginCombat\n");
-    if (m_player == nullptr || m_enemy == nullptr) return;
+    Enemy* targetEnemy = nullptr;
 
-    printf("\nCOMBAT STARTED\n");
+    for (int i = 0; i < m_entities.size(); i++) {
+        if(m_entities[i]->GetPosition() == _pos) {
+            targetEnemy = dynamic_cast<Enemy*>(m_entities[i]);
+            break;
+        }
+    }
+    if (m_player == nullptr || targetEnemy == nullptr) return;
+    int gainedGold = targetEnemy->GetGold();
 
-    while (m_enemy->GetHP() > 0 && m_player->GetHP() > 0)
+    printf("\nCOMBAT STARTED with a %c\n", targetEnemy->Draw());
+
+    while (targetEnemy->GetHP() > 0 && m_player->GetHP() > 0)
         {
-        printf("\nPlayer HP: %d | Enemy HP: %d", m_player->GetHP(), m_enemy->GetHP());
+        printf("\nPlayer HP: %d | Enemy HP: %d", m_player->GetHP(), targetEnemy->GetHP());
         request_char("\nEnter roll to roll for attack");
 
         
@@ -186,16 +216,22 @@ void Room::BeginCombat(Vec2 _pos)
         RollStats playerRoll = RollDice(playerDice);
         
         printf("You rolled a total of %d\n", playerRoll.total);
-        m_enemy->TakeDamage(playerRoll.total);
+        targetEnemy->TakeDamage(playerRoll.total);
         
         if (playerRoll.critCount > 0) {
             printf("CRITICAL HIT! %d\n", playerRoll.critCount);
         }
 
-        if (m_enemy->GetHP() <= 0) {
+        if (m_player->GetHP() <= 0) {
+            ClearLocation(_pos);
+            printf("You have been vanquished!");
+
+        }
+
+        if (targetEnemy->GetHP() <= 0) {
             ClearLocation(_pos);
             printf("The enemy has been slain!\n");
-            m_player->SetXP(5);
+            m_player->SetXP(targetEnemy->GetXP());
             printf("Would you like to loot?\n");
             do{
             promptAnswer = request_char("\nY or N");
@@ -204,8 +240,14 @@ void Room::BeginCombat(Vec2 _pos)
             if (promptAnswer == 'y'){
                 m_player->AddGold(gainedGold);
             }else break;
-            delete m_enemy;
-            m_enemy = nullptr;
+
+            for (auto it = m_entities.begin(); it != m_entities.end(); ++it) {
+                if (*it == targetEnemy) {
+                    delete *it;
+                    m_entities.erase(it);
+                    break;
+                }
+            }
             break;
         }
 

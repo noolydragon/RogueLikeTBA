@@ -111,7 +111,7 @@ void Player::Update() {
             m_goldAmount;
         }
     }
-    if (room->GetLocation(tryPos) == 'E'){
+    if (room->GetLocation(tryPos) == 'G'|| room->GetLocation(tryPos) == 'M'){
         room->BeginCombat(tryPos);
     }
 }

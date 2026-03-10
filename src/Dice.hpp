@@ -14,7 +14,7 @@ struct RollStats
     int max = 0;
     int greatest = 0;
     int critCount = 0;
-    int total = 0;
+    int total = 2;
 };
 
 static RollStats RollDice(std::vector<Die> _dice) 

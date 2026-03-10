@@ -262,15 +262,35 @@ void Room::BeginCombat(Vec2 _pos)
 
     printf("\nCOMBAT STARTED with a %c\n", targetEnemy->Draw());
 
+    printf("%d", m_weapon);
+
     while (targetEnemy->GetHP() > 0 && m_player->GetHP() > 0)
         {
         printf("\nPlayer HP: %d | Enemy HP: %d\n", m_player->GetHP(), targetEnemy->GetHP());
         request_char("\nEnter roll to roll for attack");
 
+        if(m_weapon == 101){
+            playerRoll = RollDice(s_die);
+        }
+        else if(m_weapon == 102){
+            playerRoll = RollDice(g_die);
+        }
+        else if(m_weapon == 103){
+            playerRoll = RollDice(G_die);
+        }
+        else if(m_weapon == 105){
+            playerRoll = RollDice(r_die);
+        }
+        else if(m_weapon == 104){
+            playerRoll = RollDice(d_die);
+        }
+        else if(m_weapon == 106){
+            playerRoll = RollDice(l_die);
+        }
+        else{
+            playerRoll = RollDice(m_die);
+        }
         
-        std::vector<Die> playerDice = { {20} }; // Change based on weapon
-        
-        RollStats playerRoll = RollDice(playerDice);
         
         printf("You rolled a total of %d\n", playerRoll.total);
         targetEnemy->TakeDamage(playerRoll.total);
@@ -303,7 +323,7 @@ void Room::BeginCombat(Vec2 _pos)
             break;
         }
 
-        std::vector<Die> enemyDice = { {10} };
+        std::vector<Die> enemyDice = { {1} };
         RollStats enemyRoll = RollDice(enemyDice);
         
         printf("Enemy attacks for %d damage!\n", enemyRoll.total);
@@ -324,7 +344,70 @@ void Room::BeginCombat(Vec2 _pos)
 }
 
 void Room::Trap(Vec2 _pos){
-    m_player->TakeDamage(5);
-    printf("you have taken %d health becuse of a trap\n", m_player->GetHP());
+    m_player->TakeDamage(2);
+    printf("you have taken %d health becuse of a trap\n", m_player->GetHP());\
+    if(m_player->GetHP() <= 0){
+        printf("you died");
+        exit(0);
+    }
+}
+
+void Room::Chest(Vec2 _pos){
+    std::srand(static_cast<unsigned int>(std::time(0))); 
+
+    LootTable chestLoot;
+    chestLoot.addEntry({"Short Sword", 101, 's'}, 1);
+    chestLoot.addEntry({"Health Potion", 107, 'h'}, 0);
+    chestLoot.addEntry({"Gun", 103, 'g'}, 10);
+    chestLoot.addEntry({"Dagger", 104, 'd'}, 5);
+    chestLoot.addEntry({"Rapier", 105, 'r'}, 4);
+    chestLoot.addEntry({"Long Sword", 106, 'l'}, 3);
+    chestLoot.addEntry({"Great Sword", 102, 'G'}, 2);
+    chestLoot.addEntry({"5 Gold", 108, '5'}, 0);
+    chestLoot.addEntry({"10 Gold", 109, '1'}, 0);
+    chestLoot.addEntry({"15 Gold", 110, '0'}, 0);
+
+    Item droppedItem = chestLoot.chooseRandomItem();
+    std::cout << "You found: " << droppedItem.name << std::endl;
+    if(droppedItem.itemId < 107){
+        m_weapon = droppedItem.itemId;
+    }
+    if(droppedItem.itemId > 107){
+        if(droppedItem.itemChar == '5'){
+            m_player->AddGold(5);
+        }
+        else if(droppedItem.itemChar == '1'){
+            m_player->AddGold(10);
+        }
+        else if(droppedItem.itemChar == '0'){
+            m_player->AddGold(15);
+        }
+
+    }
+    if(droppedItem.itemChar == 's'){
+        std::vector<Die> m_die = { {6}};
+        printf("die changed\n");
+    }
+    if(droppedItem.itemChar == 'G'){
+        std::vector<Die> m_die = { {20}};
+        printf("die changed\n");
+    }
+    if(droppedItem.itemChar == 'g'){
+        std::vector<Die> m_die = { {100}};
+        printf("die changed\n");
+    }
+    if(droppedItem.itemChar == 'r'){
+        std::vector<Die> m_die = { {8}};
+        printf("die changed\n");
+    }
+    if(droppedItem.itemChar == 'd'){
+        std::vector<Die> m_die = { {4}};
+        printf("die changed\n");
+    }
+    if(droppedItem.itemChar == 'l'){
+        std::vector<Die> m_die = { {12}};
+        printf("die changed\n");
+    }
+    
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Entity.hpp"
+#include "Dice.hpp"
 
 class Player : public Entity
 {

@@ -12,6 +12,7 @@ public:
     void Load(std::string _path);
     void Draw();
     void Update();
+    bool IsRoomClear();
     char GetLocation(Vec2 _pos);
     void ClearLocation(Vec2 _pos);
     void OpenDoor(Vec2 _pos);

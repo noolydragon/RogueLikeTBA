@@ -7,7 +7,7 @@
 class Enemy : public Entity
 {
 public:
-    virtual void Start(Vec2 _pos) { m_position = _pos; }
+    virtual void Start(Vec2 _pos, int _health) { m_position = _pos; }
     virtual void Update() = 0;
     virtual int GetHP() { return m_EHealth; }
     virtual int GetXP() { return m_XPworth; }
@@ -23,7 +23,7 @@ protected:
                 //Public enemy number one lol
 class Goblin : public Enemy {
 public:
-    void Start(Vec2 _pos) override;
+    void Start(Vec2 _pos, int _health) override;
     void Update() override;
     char Draw() override;
     int GetGold() override;
@@ -33,7 +33,7 @@ public:
 
 class Sloblin : public Enemy {
 public:
-    void Start(Vec2 _pos) override;
+    void Start(Vec2 _pos, int _health) override;
     void Update() override;
     char Draw() override;
     int GetGold() override;

@@ -10,9 +10,17 @@ void Player::Start(Vec2 _pos) {
     m_character = 'P';
     m_position = _pos;
     m_weapon = 'p';
+    m_currentLvl = 1;
+    m_currentXP = 0;
+    m_requiredXP = 20;
+    MoveToStart(_pos);
 }
 
-void Player::Update() {
+void Player::MoveToStart(Vec2 _pos) {
+    m_position = _pos;
+}
+
+void Player::Update(){
     //while(request_char("hit w to continue: ") != 'w') {}
 
     if(m_weapon == 'p'){
@@ -86,10 +94,18 @@ void Player::Update() {
         room->OpenDoor(tryPos);
         m_keyCount -= 1;
         printf("You used a key!, You have %d keys left\n", m_keyCount);
-
     }
 
-    if (room->GetLocation(tryPos) == 'C' && (m_keyCount >= 1)){
+    if (room->GetLocation(tryPos) == 'D' || room->GetLocation(tryPos) == 'L') {
+        if (room->IsRoomClear()) {
+            room->OpenDoor(tryPos);
+        } else {
+            printf("\nThe door is sealed by goblin magic.\n");
+        }
+    }
+
+    if (room->GetLocation(tryPos) == 'C' && (m_keyCount >= 1))
+    {
         std::srand(static_cast<unsigned int>(std::time(0))); 
 
         LootTable chestLoot;
@@ -106,10 +122,12 @@ void Player::Update() {
 
         Item droppedItem = chestLoot.chooseRandomItem();
         std::cout << "You found: " << droppedItem.name << std::endl;
-        if(droppedItem.itemId < 107){
+        if(droppedItem.itemId < 107)
+        {
             m_weapon = droppedItem.itemChar;
         }
-        if(droppedItem.itemId > 107){
+        if(droppedItem.itemId > 107)
+        {
             if(droppedItem.itemChar == '5'){
                 m_goldAmount += 5;
             }
@@ -124,13 +142,41 @@ void Player::Update() {
         m_keyCount--;
         room->ClearLocation(tryPos);
     }
-    if (room->GetLocation(tryPos) == 'G'|| room->GetLocation(tryPos) == 'M'){
-
-    if (room->GetLocation(tryPos) == 'E'){
+    if (room->GetLocation(tryPos) == 'G'|| room->GetLocation(tryPos) == 'M')
+    {
         room->BeginCombat(tryPos);
     }
 
-    if (room->GetLocation(tryPos) == 'T'){
+    if (room->GetLocation(tryPos) == 'T')
+    {
         room->Trap(tryPos);
+    }
+}
+
+int Player::PrintStats(){
+    return printf("YOUR STATS:\nLevel: %d\nHealth: %d\nGold: %d\nXP: %d\n", m_currentLvl, m_Phealth, m_goldAmount, m_currentXP);
+}
+
+void Player::SetXP(int _amount) {
+    m_currentXP += _amount;
+
+    while (m_currentXP >= m_requiredXP){
+        m_currentXP -= m_requiredXP;
+        m_currentLvl ++;
+
+        m_maxHP += 1; //Increases the health cap;
+        m_Phealth = m_maxHP; //Level up heal just dropped;
+        // Increase the threshold by a slight percentage
+        m_requiredXP = int(m_requiredXP * 1.2f);
+        printf("LEVEL UP!!! You are now level %d!\nMax HP raised to %d!\n", m_currentLvl, m_maxHP);
+    }
+}
+
+void Player::AddHP(int _amount) {
+    m_Phealth += _amount;
+
+    //Health cap logic
+    if (m_Phealth > m_maxHP) {
+        m_Phealth = m_maxHP;
     }
 }

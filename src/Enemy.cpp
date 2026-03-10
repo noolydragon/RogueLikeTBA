@@ -3,10 +3,10 @@
 #include "Room.hpp"
 #include "fogpi/io.hpp"
 
-void Goblin::Start(Vec2 _pos) {
+void Goblin::Start(Vec2 _pos, int _health) {
     m_position = _pos;
     m_character = 'G';
-    m_EHealth = 5;
+    m_EHealth = _health;
     m_EGold = 5;
     m_XPworth = 5;
 }
@@ -36,10 +36,10 @@ int Goblin::GetGold() { return m_EGold; }
 int Goblin::GetXP() { return m_XPworth; }
 void Goblin::TakeDamage(int _amount) { m_EHealth -= _amount; }
 
-void Sloblin::Start(Vec2 _pos) {
+void Sloblin::Start(Vec2 _pos, int _health) {
     m_position = _pos;
     m_character = 'M';
-    m_EHealth = 15;
+    m_EHealth = _health;
     m_EGold = 15;
     m_XPworth = 15;
 }

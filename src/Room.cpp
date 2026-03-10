@@ -89,10 +89,12 @@ void Room::Load(std::string _path)
         {
             if (m_map[y][x] == 'S')
             {
-                if (m_player == nullptr)
+                if (m_player == nullptr){
                     m_player = new Player();
-                
-                m_player->Start(Vec2(x,y));
+                    m_player->Start(Vec2(x,y));
+                } else {
+                    m_player->MoveToStart(Vec2(x,y));
+                }
                 m_map[y][x] = ' ';
             }
 
@@ -109,14 +111,18 @@ void Room::Load(std::string _path)
             if (m_map[y][x] == 'G')
             {
                 Goblin* g = new Goblin();
-                g->Start(Vec2(x,y));
+                g->room = this;
+                int scaledHP = 5 + (m_roomcount * 2);
+                g->Start(Vec2(x,y), scaledHP);
                 m_entities.push_back(g);
                 m_map[y][x] = ' ';
             }
             else if (m_map[y][x] == 'M')
             {
                 Sloblin* s = new Sloblin();
-                s->Start(Vec2(x,y));
+                s->room = this;
+                int scaledHP = 15 + (m_roomcount * 2);
+                s->Start(Vec2(x,y), scaledHP);
                 m_entities.push_back(s);
                 m_map[y][x] = ' ';
             }
@@ -126,15 +132,25 @@ void Room::Load(std::string _path)
 
 void Room::Update()
 {
+    //Moves the player first
+    if (m_player != nullptr)
+    {
+        if (!m_player->IsAlive()) {
+            printf("GAME OVER\n");
+            m_player->PrintStats();
+            delete m_player;
+            m_player = nullptr;
+            request_char("Press any key to exit...");
+            exit(0);
+        }
+        m_player->room = this;
+        m_player->Update();
+    }
+    //Moves the enemy in response
     for (Entity* e : m_entities) {
         e->Update();
     }
     Draw();
-    if (m_player != nullptr)
-    {
-        m_player->room = this;
-        m_player->Update();
-    }
 }
 
 void Room::Draw()
@@ -169,7 +185,17 @@ char Room::GetLocation(Vec2 _pos)
             return e->Draw();
         }
     }
-    return m_map[_pos.y][_pos.x];
+
+    char mapChar = m_map[_pos.y][_pos.x];
+    
+    if (mapChar == 'D' || mapChar == 'L')
+    {
+        if (!IsRoomClear())
+        {
+            return 'L';
+        }
+    }
+    return mapChar;
 }
 
 void Room::ClearLocation(Vec2 _pos)
@@ -185,13 +211,39 @@ void Room::ClearLocation(Vec2 _pos)
 
 void Room::OpenDoor(Vec2 _pos)
 {
+    //Locked door logic yay!
+    if (!IsRoomClear()) {
+        printf("\nYou can't leave, magic bars the doors.\n");
+        return;
+    }
+
+    //Between room healing logic
+    std::vector<Die> restDice = { {6} };
+    RollStats healRoll = RollDice(restDice);
+    m_player->AddHP(healRoll.total);
+    printf("\nYou rested and recovered %d HP! Current HP: %d\n", healRoll.total, m_player->GetHP());
+    request_char("Enter any symbol to continue...");
+
+    //Idk logic...wait, level loding
     std::string sti = std::to_string(1 + (rand() % (9-1 +1)));
     Load("assets/level_" + sti + ".map" );
     m_roomcount ++;
     if(m_roomcount == 10){
         Load("assets/level_10.map");
     }
-    
+}
+
+bool Room::IsRoomClear() {
+    for (Entity* e : m_entities) {
+        if (e == nullptr) continue;
+
+        Enemy* isEnemy = dynamic_cast<Enemy*>(e);
+
+        if (isEnemy != nullptr) {
+            return false;
+        }
+    }
+    return true;
 }
 
 void Room::BeginCombat(Vec2 _pos)
@@ -212,7 +264,7 @@ void Room::BeginCombat(Vec2 _pos)
 
     while (targetEnemy->GetHP() > 0 && m_player->GetHP() > 0)
         {
-        printf("\nPlayer HP: %d | Enemy HP: %d", m_player->GetHP(), targetEnemy->GetHP());
+        printf("\nPlayer HP: %d | Enemy HP: %d\n", m_player->GetHP(), targetEnemy->GetHP());
         request_char("\nEnter roll to roll for attack");
 
         
@@ -227,16 +279,11 @@ void Room::BeginCombat(Vec2 _pos)
             printf("CRITICAL HIT! %d\n", playerRoll.critCount);
         }
 
-        if (m_player->GetHP() <= 0) {
-            ClearLocation(_pos);
-            printf("You have been vanquished!");
-
-        }
-
         if (targetEnemy->GetHP() <= 0) {
             ClearLocation(_pos);
             printf("The enemy has been slain!\n");
             m_player->SetXP(targetEnemy->GetXP());
+
             printf("Would you like to loot?\n");
             do{
             promptAnswer = request_char("\nY or N");
@@ -261,8 +308,19 @@ void Room::BeginCombat(Vec2 _pos)
         
         printf("Enemy attacks for %d damage!\n", enemyRoll.total);
         m_player->TakeDamage(enemyRoll.total);
+        if (m_player->IsAlive() == false) {
+            printf("\nThat was fatal, you died...\n");
+            break;
+        }
     }
-    printf("You gained %d gold and now have %d total gold, %d health %d XP\n", gainedGold, m_player->GetGold(), m_player->GetHP(), m_player->GetXP());
+    if (m_player->IsAlive()) {
+        printf("\nYou gained %d gold\n", gainedGold);
+        m_player->PrintStats();
+    } else {
+        printf("\nYou lost!\n");
+        m_player->PrintStats();
+    }
+    
 }
 
 void Room::Trap(Vec2 _pos){

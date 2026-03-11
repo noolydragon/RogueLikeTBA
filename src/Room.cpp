@@ -112,7 +112,7 @@ void Room::Load(std::string _path)
             {
                 Goblin* g = new Goblin();
                 g->room = this;
-                int scaledHP = 5 + (m_roomcount);
+                int scaledHP = 5 + (m_roomcount / 2);
                 g->Start(Vec2(x,y), scaledHP);
                 m_entities.push_back(g);
                 m_map[y][x] = ' ';
@@ -121,7 +121,7 @@ void Room::Load(std::string _path)
             {
                 Sloblin* s = new Sloblin();
                 s->room = this;
-                int scaledHP = 15 + (m_roomcount);
+                int scaledHP = 15 + (m_roomcount / 2);
                 s->Start(Vec2(x,y), scaledHP);
                 m_entities.push_back(s);
                 m_map[y][x] = ' ';
@@ -130,7 +130,7 @@ void Room::Load(std::string _path)
             {
                 Ogre* o = new Ogre();
                 o->room = this;
-                int scaledHP = 25 + (m_roomcount);
+                int scaledHP = 25 + (m_roomcount / 2);
                 o->Start(Vec2(x,y), scaledHP);
                 m_entities.push_back(o);
                 m_map[y][x] = ' ';
@@ -390,14 +390,14 @@ void Room::Chest(Vec2 _pos){
     LootTable chestLoot;
     chestLoot.addEntry({"Short Sword", 101, 's'}, 4.5);
     chestLoot.addEntry({"Health Potion", 107, 'h'}, 0);
-    chestLoot.addEntry({"Gun", 103, 'g'}, 1);
+    chestLoot.addEntry({"Gun", 103, 'g'}, 2);
     chestLoot.addEntry({"Dagger", 104, 'd'}, 5);
     chestLoot.addEntry({"Rapier", 105, 'r'}, 4);
-    chestLoot.addEntry({"Long Sword", 106, 'l'}, 3);
-    chestLoot.addEntry({"Great Sword", 102, 'G'}, 2);
-    chestLoot.addEntry({"5 Gold", 108, '5'}, 5);
-    chestLoot.addEntry({"10 Gold", 109, '1'}, 6);
-    chestLoot.addEntry({"15 Gold", 110, '0'}, 7);
+    chestLoot.addEntry({"Long Sword", 106, 'l'}, 3.5);
+    chestLoot.addEntry({"Great Sword", 102, 'G'}, 3);
+    chestLoot.addEntry({"5 Gold", 108, '5'}, 3);
+    chestLoot.addEntry({"10 Gold", 109, '1'}, 2);
+    chestLoot.addEntry({"15 Gold", 110, '0'}, 1);
 
     Item droppedItem = chestLoot.chooseRandomItem();
     std::cout << "You found: " << droppedItem.name << std::endl;

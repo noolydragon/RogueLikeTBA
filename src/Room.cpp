@@ -283,31 +283,31 @@ void Room::BeginCombat(Vec2 _pos)
 
         if(m_weapon == 101){
             playerRoll = RollDice(s_die);
-            printf("short sword\n");
+            
         }
         else if(m_weapon == 102){
             playerRoll = RollDice(g_die);
-            printf("Great sword\n");
+            
         }
         else if(m_weapon == 103){
             playerRoll = RollDice(G_die);
-            printf("Gun\n");
+            
         }
         else if(m_weapon == 105){
             playerRoll = RollDice(r_die);
-            printf("rapier\n");
+            
         }
         else if(m_weapon == 104){
             playerRoll = RollDice(d_die);
-            printf("dagger\n");
+            
         }
         else if(m_weapon == 106){
             playerRoll = RollDice(l_die);
-            printf("long sword\n");
+            
         }
         else{
             playerRoll = RollDice(d_die);
-            printf("pan\n");
+            
         }
         
         
@@ -380,7 +380,7 @@ void Room::Trap(Vec2 _pos){
     }
 }
 void Room::Accesion(Vec2 _pos){
-    printf("\nyou won\n");
+    printf("\nYou accesioned to the 3rd dimession\n");
     m_player->PrintStats();
     exit(0);
 }

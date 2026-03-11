@@ -40,3 +40,13 @@ public:
     int GetXP() override;
     void TakeDamage(int _amount)override;
 };
+
+class Ogre : public Enemy {
+public:
+    void Start(Vec2 _pos, int _health) override;
+    void Update() override;
+    char Draw() override;
+    int GetGold() override;
+    int GetXP() override;
+    void TakeDamage(int _amount) override;
+};

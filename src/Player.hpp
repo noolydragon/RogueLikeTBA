@@ -27,4 +27,5 @@ private:
     int m_requiredXP = 20;
     int m_goldAmount = 0;
     char m_weapon;
+    int m_pepbleAmount = 0;
 };

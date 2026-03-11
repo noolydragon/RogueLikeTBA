@@ -114,14 +114,20 @@ void Player::Update(){
         room->BeginCombat(tryPos);
     }
 
-    if (room->GetLocation(tryPos) == 'T')
+    if (room->GetLocation(tryPos) == '.')
     {
         room->Trap(tryPos);
+        room->ClearLocation(tryPos);
+        m_position = tryPos;
+        m_pepbleAmount++;
+    }
+    if(room->GetLocation(tryPos) == 'A'){
+        room->Accesion(tryPos);
     }
 }
 
 int Player::PrintStats(){
-    return printf("YOUR STATS:\nLevel: %d\nHealth: %d\nGold: %d\nXP: %d\n", m_currentLvl, m_Phealth, m_goldAmount, m_currentXP);
+    return printf("YOUR STATS:\nLevel: %d\nHealth: %d\nGold: %d\nXP: %d\nPepble Collected: %d\n", m_currentLvl, m_Phealth, m_goldAmount, m_currentXP, m_pepbleAmount);
 }
 
 void Player::SetXP(int _amount) {

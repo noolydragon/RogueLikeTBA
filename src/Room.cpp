@@ -126,6 +126,19 @@ void Room::Load(std::string _path)
                 m_entities.push_back(s);
                 m_map[y][x] = ' ';
             }
+            else if (m_map[y][x] == 'O')
+            {
+                Ogre* o = new Ogre();
+                o->room = this;
+                int scaledHP = 25 + (m_roomcount * 2);
+                o->Start(Vec2(x,y), scaledHP);
+                m_entities.push_back(o);
+                m_map[y][x] = ' ';
+            }
+
+            if(m_map[y][x] == 'T'){
+                m_map[y][x] = '.';
+            }
         }
     }
 }
@@ -188,7 +201,7 @@ char Room::GetLocation(Vec2 _pos)
 
     char mapChar = m_map[_pos.y][_pos.x];
     
-    if (mapChar == 'D' || mapChar == 'L')
+    if (mapChar == 'D' || mapChar == 'L' || mapChar == 'A')
     {
         if (!IsRoomClear())
         {
@@ -262,7 +275,6 @@ void Room::BeginCombat(Vec2 _pos)
 
     printf("\nCOMBAT STARTED with a %c\n", targetEnemy->Draw());
 
-    printf("%d", m_weapon);
 
     while (targetEnemy->GetHP() > 0 && m_player->GetHP() > 0)
         {
@@ -271,24 +283,31 @@ void Room::BeginCombat(Vec2 _pos)
 
         if(m_weapon == 101){
             playerRoll = RollDice(s_die);
+            printf("short sword\n");
         }
         else if(m_weapon == 102){
             playerRoll = RollDice(g_die);
+            printf("Great sword\n");
         }
         else if(m_weapon == 103){
             playerRoll = RollDice(G_die);
+            printf("Gun\n");
         }
         else if(m_weapon == 105){
             playerRoll = RollDice(r_die);
+            printf("rapier\n");
         }
         else if(m_weapon == 104){
             playerRoll = RollDice(d_die);
+            printf("dagger\n");
         }
         else if(m_weapon == 106){
             playerRoll = RollDice(l_die);
+            printf("long sword\n");
         }
         else{
-            playerRoll = RollDice(m_die);
+            playerRoll = RollDice(d_die);
+            printf("pan\n");
         }
         
         
@@ -323,7 +342,7 @@ void Room::BeginCombat(Vec2 _pos)
             break;
         }
 
-        std::vector<Die> enemyDice = { {1} };
+        std::vector<Die> enemyDice = { {5} };
         RollStats enemyRoll = RollDice(enemyDice);
         
         printf("Enemy attacks for %d damage!\n", enemyRoll.total);
@@ -344,28 +363,34 @@ void Room::BeginCombat(Vec2 _pos)
 }
 
 void Room::Trap(Vec2 _pos){
-    m_player->TakeDamage(2);
-    printf("you have taken %d health becuse of a trap\n", m_player->GetHP());\
-    if(m_player->GetHP() <= 0){
-        printf("you died");
-        exit(0);
+    if(m_roomcount == 10){
+        m_player->TakeDamage(2);
+        printf("you are at %d health becuse of a trap\n", m_player->GetHP());\
+        if(m_player->GetHP() <= 0){
+            printf("you died");
+            exit(0);
+        }
     }
 }
-
+void Room::Accesion(Vec2 _pos){
+    printf("\nyou won\n");
+    m_player->PrintStats();
+    exit(0);
+}
 void Room::Chest(Vec2 _pos){
     std::srand(static_cast<unsigned int>(std::time(0))); 
 
     LootTable chestLoot;
-    chestLoot.addEntry({"Short Sword", 101, 's'}, 1);
+    chestLoot.addEntry({"Short Sword", 101, 's'}, 4.5);
     chestLoot.addEntry({"Health Potion", 107, 'h'}, 0);
-    chestLoot.addEntry({"Gun", 103, 'g'}, 10);
+    chestLoot.addEntry({"Gun", 103, 'g'}, 1);
     chestLoot.addEntry({"Dagger", 104, 'd'}, 5);
     chestLoot.addEntry({"Rapier", 105, 'r'}, 4);
     chestLoot.addEntry({"Long Sword", 106, 'l'}, 3);
     chestLoot.addEntry({"Great Sword", 102, 'G'}, 2);
-    chestLoot.addEntry({"5 Gold", 108, '5'}, 0);
-    chestLoot.addEntry({"10 Gold", 109, '1'}, 0);
-    chestLoot.addEntry({"15 Gold", 110, '0'}, 0);
+    chestLoot.addEntry({"5 Gold", 108, '5'}, 5);
+    chestLoot.addEntry({"10 Gold", 109, '1'}, 6);
+    chestLoot.addEntry({"15 Gold", 110, '0'}, 7);
 
     Item droppedItem = chestLoot.chooseRandomItem();
     std::cout << "You found: " << droppedItem.name << std::endl;
@@ -384,30 +409,6 @@ void Room::Chest(Vec2 _pos){
         }
 
     }
-    if(droppedItem.itemChar == 's'){
-        std::vector<Die> m_die = { {6}};
-        printf("die changed\n");
-    }
-    if(droppedItem.itemChar == 'G'){
-        std::vector<Die> m_die = { {20}};
-        printf("die changed\n");
-    }
-    if(droppedItem.itemChar == 'g'){
-        std::vector<Die> m_die = { {100}};
-        printf("die changed\n");
-    }
-    if(droppedItem.itemChar == 'r'){
-        std::vector<Die> m_die = { {8}};
-        printf("die changed\n");
-    }
-    if(droppedItem.itemChar == 'd'){
-        std::vector<Die> m_die = { {4}};
-        printf("die changed\n");
-    }
-    if(droppedItem.itemChar == 'l'){
-        std::vector<Die> m_die = { {12}};
-        printf("die changed\n");
-    }
-    
 }
+
 

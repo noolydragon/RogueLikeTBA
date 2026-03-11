@@ -137,7 +137,7 @@ void Player::SetXP(int _amount) {
         m_currentXP -= m_requiredXP;
         m_currentLvl ++;
 
-        m_maxHP += 1; //Increases the health cap;
+        m_maxHP += 5; //Increases the health cap;
         m_Phealth = m_maxHP; //Level up heal just dropped;
         // Increase the threshold by a slight percentage
         m_requiredXP = int(m_requiredXP * 1.2f);

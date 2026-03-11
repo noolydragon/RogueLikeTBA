@@ -112,7 +112,7 @@ void Room::Load(std::string _path)
             {
                 Goblin* g = new Goblin();
                 g->room = this;
-                int scaledHP = 5 + (m_roomcount * 2);
+                int scaledHP = 5 + (m_roomcount);
                 g->Start(Vec2(x,y), scaledHP);
                 m_entities.push_back(g);
                 m_map[y][x] = ' ';
@@ -121,7 +121,7 @@ void Room::Load(std::string _path)
             {
                 Sloblin* s = new Sloblin();
                 s->room = this;
-                int scaledHP = 15 + (m_roomcount * 2);
+                int scaledHP = 15 + (m_roomcount);
                 s->Start(Vec2(x,y), scaledHP);
                 m_entities.push_back(s);
                 m_map[y][x] = ' ';
@@ -130,7 +130,7 @@ void Room::Load(std::string _path)
             {
                 Ogre* o = new Ogre();
                 o->room = this;
-                int scaledHP = 25 + (m_roomcount * 2);
+                int scaledHP = 25 + (m_roomcount);
                 o->Start(Vec2(x,y), scaledHP);
                 m_entities.push_back(o);
                 m_map[y][x] = ' ';
@@ -342,8 +342,15 @@ void Room::BeginCombat(Vec2 _pos)
             break;
         }
 
-        std::vector<Die> enemyDice = { {5} };
-        RollStats enemyRoll = RollDice(enemyDice);
+        if(targetEnemy->Draw() == 'G'){
+            enemyRoll = RollDice(e_die);
+        }
+        else if(targetEnemy->Draw() == 'M'){
+            enemyRoll = RollDice(m_die);
+        }
+        else if(targetEnemy->Draw() == 'O'){
+            enemyRoll = RollDice(o_die);
+        }
         
         printf("Enemy attacks for %d damage!\n", enemyRoll.total);
         m_player->TakeDamage(enemyRoll.total);

@@ -28,12 +28,15 @@ private:
     std::vector<Door> m_doors;
     int m_roomcount = 0;
     int m_weapon;
-    std::vector<Die> m_die = { {2}};
     std::vector<Die> s_die = { {6}};
     std::vector<Die> g_die = { {20}};
     std::vector<Die> G_die = { {100}};
     std::vector<Die> r_die = { {8}};
     std::vector<Die> d_die = { {4}};
     std::vector<Die> l_die = { {12}};
+    std::vector<Die> e_die = { {5}};
+    std::vector<Die> m_die = { {10}};
+    std::vector<Die> o_die = { {20}};
     RollStats playerRoll;
+    RollStats enemyRoll;
 };

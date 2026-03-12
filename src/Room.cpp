@@ -130,7 +130,7 @@ void Room::Load(std::string _path)
             {
                 Ogre* o = new Ogre();
                 o->room = this;
-                int scaledHP = 25 + (m_roomcount / 2);
+                int scaledHP = 25;
                 o->Start(Vec2(x,y), scaledHP);
                 m_entities.push_back(o);
                 m_map[y][x] = ' ';

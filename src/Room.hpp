@@ -36,7 +36,7 @@ private:
     std::vector<Die> l_die = { {12}};
     std::vector<Die> e_die = { {5}};
     std::vector<Die> m_die = { {10}};
-    std::vector<Die> o_die = { {20}};
+    std::vector<Die> o_die = { {15}};
     RollStats playerRoll;
     RollStats enemyRoll;
 };
